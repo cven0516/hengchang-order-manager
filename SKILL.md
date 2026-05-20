@@ -1,7 +1,7 @@
 ---
 name: hengchang-order-manager
 description: 恒昌橡塑订单管理自动化。识别图片/Excel订单或发货单，写入腾讯文档表格。支持生成对账单。
-version: 2.3.0
+version: 2.4.0
 agent_created: true
 ---
 
@@ -51,9 +51,11 @@ Q列: `=TEXTJOIN("；",TRUE,IF((发货总单!$H$2:$H$500=B{N+1})*(发货总单!$
 ## 场景3: 生成对账单（指定日期范围 → Mzfnaw）
 
 1. 读Gikgrt全部数据，筛选送货日期(B列)在范围内
-2. 从BB08J2匹配含税单价(M列)，条件=订单号(B)+物料名称(G)+物料编码(F)
-3. 清空Mzfnaw旧数据(clear_range_cells start_row=1)
-4. 写入，标黄，报合计
+2. **公式模板**（N=实际行号，0-based）：
+   E列(含税价): `=SUMIFS(客户订单总表!M:M,客户订单总表!B:B,H{N+1},客户订单总表!G:G,B{N+1},客户订单总表!F:F,C{N+1})`
+   F列(金额): `=D{N+1}*E{N+1}`
+3. 读Mzfnaw找lastRow，从lastRow+1追加新行（**不**清空旧数据）
+4. 写入（9列：A序号 B产品名称 C型号 D数量 E含税价公式 F金额公式 G送货日期 H订单号 I备注），标黄，报合计
 
 ## 踩坑
 
